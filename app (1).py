@@ -99,8 +99,7 @@ if username and password:
                 st.error("Client name and either email or phone are required.")
             else:
                 note = (
-                    note = f"Troubleshooting Summary:\n
-"
+                    note = f"Troubleshooting Summary:\n"
                     f"User: {username}
 Package: {package_id}
 "
