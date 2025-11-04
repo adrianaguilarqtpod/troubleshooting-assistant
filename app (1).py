@@ -9,7 +9,6 @@ USER_CREDENTIALS = {
 }
 
 # Title and login section
-st.set_page_config(page_title="Troubleshooting Assistant", layout="centered")
 st.title("Troubleshooting Assistant")
 
 st.subheader("User Login")
@@ -50,65 +49,75 @@ if username and password:
         # Step logger
         st.subheader("Steps Taken")
         steps_taken = []
-        flow_steps = {
-            "AMP Software Update": [
-                "Login to AMP360", "Verify template", "Delete terminal",
-                "Add terminal", "Uninstall apps", "Reset cache", "Reinstall apps"
-            ],
-            "Card Reader Troubleshooting": [
-                "Clean reader", "Check logs", "Review declines",
-                "Test in Magtek Utility", "Check Siteminder cards",
-                "Try different USB", "Verify Phillips config"
-            ],
-            "Export Logs from AMP": [
-                "Insert USB", "Set USB mode to Host", "Open Log Manager",
-                "Enter password", "Submit to copy logs",
-                "Wait before dismounting", "Copy logs to PC"
-            ],
-            "M4000 BIOS Replacement": [
-                "Power down terminal", "Take wire photos", "Replace CPU",
-                "Reconnect wires", "Insert BIOS stick", "Disconnect hard drive",
-                "Power on terminal", "Follow instructions",
-                "Remove BIOS stick", "Reconnect hard drive"
-            ],
-            "Solid State Relay Installation": [
-                "Mount SSR on DIN rail", "Ensure spacing", "Use correct torque",
-                "Format USB to FAT32", "Use proper wire sizes",
-                "Follow derating curves", "Observe polarity"
-            ]
-        }
-
-        for step in flow_steps[flow]:
-            if st.checkbox(step):
-                steps_taken.append(step)
+        if flow == "AMP Software Update":
+            if st.checkbox("Login to AMP360"): steps_taken.append("Login to AMP360")
+            if st.checkbox("Verify template"): steps_taken.append("Verify template")
+            if st.checkbox("Delete terminal"): steps_taken.append("Delete terminal")
+            if st.checkbox("Add terminal"): steps_taken.append("Add terminal")
+            if st.checkbox("Uninstall apps"): steps_taken.append("Uninstall apps")
+            if st.checkbox("Reset cache"): steps_taken.append("Reset cache")
+            if st.checkbox("Reinstall apps"): steps_taken.append("Reinstall apps")
+        elif flow == "Card Reader Troubleshooting":
+            if st.checkbox("Clean reader"): steps_taken.append("Clean reader")
+            if st.checkbox("Check logs"): steps_taken.append("Check logs")
+            if st.checkbox("Review declines"): steps_taken.append("Review declines")
+            if st.checkbox("Test in Magtek Utility"): steps_taken.append("Test in Magtek Utility")
+            if st.checkbox("Check Siteminder cards"): steps_taken.append("Check Siteminder cards")
+            if st.checkbox("Try different USB"): steps_taken.append("Try different USB")
+            if st.checkbox("Verify Phillips config"): steps_taken.append("Verify Phillips config")
+        elif flow == "Export Logs from AMP":
+            if st.checkbox("Insert USB"): steps_taken.append("Insert USB")
+            if st.checkbox("Set USB mode to Host"): steps_taken.append("Set USB mode to Host")
+            if st.checkbox("Open Log Manager"): steps_taken.append("Open Log Manager")
+            if st.checkbox("Enter password"): steps_taken.append("Enter password")
+            if st.checkbox("Submit to copy logs"): steps_taken.append("Submit to copy logs")
+            if st.checkbox("Wait before dismounting"): steps_taken.append("Wait before dismounting")
+            if st.checkbox("Copy logs to PC"): steps_taken.append("Copy logs to PC")
+        elif flow == "M4000 BIOS Replacement":
+            if st.checkbox("Power down terminal"): steps_taken.append("Power down terminal")
+            if st.checkbox("Take wire photos"): steps_taken.append("Take wire photos")
+            if st.checkbox("Replace CPU"): steps_taken.append("Replace CPU")
+            if st.checkbox("Reconnect wires"): steps_taken.append("Reconnect wires")
+            if st.checkbox("Insert BIOS stick"): steps_taken.append("Insert BIOS stick")
+            if st.checkbox("Disconnect hard drive"): steps_taken.append("Disconnect hard drive")
+            if st.checkbox("Power on terminal"): steps_taken.append("Power on terminal")
+            if st.checkbox("Follow instructions"): steps_taken.append("Follow instructions")
+            if st.checkbox("Remove BIOS stick"): steps_taken.append("Remove BIOS stick")
+            if st.checkbox("Reconnect hard drive"): steps_taken.append("Reconnect hard drive")
+        elif flow == "Solid State Relay Installation":
+            if st.checkbox("Mount SSR on DIN rail"): steps_taken.append("Mount SSR on DIN rail")
+            if st.checkbox("Ensure spacing"): steps_taken.append("Ensure spacing")
+            if st.checkbox("Use correct torque"): steps_taken.append("Use correct torque")
+            if st.checkbox("Format USB to FAT32"): steps_taken.append("Format USB to FAT32")
+            if st.checkbox("Use proper wire sizes"): steps_taken.append("Use proper wire sizes")
+            if st.checkbox("Follow derating curves"): steps_taken.append("Follow derating curves")
+            if st.checkbox("Observe polarity"): steps_taken.append("Observe polarity")
 
         # Generate SNOW note
         if st.button("Generate SNOW Note"):
             if not first_name or not last_name or (not contact_email and not contact_phone):
                 st.error("Client name and either email or phone are required.")
             else:
-                note = f"Troubleshooting Summary:
+                note = (
+                    f"Troubleshooting Summary:
 "
-                note += f"User: {username}
+                    f"User: {username}
 Package: {package_id}
 "
-                note += f"Client: {first_name} {last_name}
+                    f"Client: {first_name} {last_name}
 "
-                if contact_email:
-                    note += f"Email: {contact_email}
-"
-                if contact_phone:
-                    note += f"Phone: {contact_phone}
-"
-                if is_tech and install_company:
-                    note += f"Installer: {install_company}
-"
-                note += "Steps Taken:
-"
-                for step in steps_taken:
-                    note += f"- {step}
-"
-                note += "Next Steps: Monitor system and verify resolution."
+                    f"Email: {contact_email}
+" if contact_email else ""
+                    f"Phone: {contact_phone}
+" if contact_phone else ""
+                    f"Installer: {install_company}
+" if is_tech and install_company else ""
+                    f"Steps Taken:
+" + "
+".join([f"- {step}" for step in steps_taken]) +
+                    "
+Next Steps: Monitor system and verify resolution."
+                )
                 st.text_area("Generated SNOW Note", value=note, height=300)
                 st.button("Copy to Clipboard")
     else:
